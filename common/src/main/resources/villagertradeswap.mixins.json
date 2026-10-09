@@ -4,11 +4,15 @@
   "package": "io.github.emberbocor.villagertradeswap.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "MerchantMenuAccessor",
     "MobMixin",
+    "TreasureMapForEmeraldsAccessor",
+    "VillagerInvoker",
     "VillagerMixin",
     "ZombieVillagerMixin"
   ],
   "client": [
+    "MerchantScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
