@@ -10,7 +10,7 @@ public final class ClientPayloadHandler {
 
     public static void handleRerollInfo(RerollInfoPayload payload) {
         if (Minecraft.getInstance().screen instanceof MerchantScreen screen && screen.getMenu().containerId == payload.containerId()) {
-            ((RerollInfoHolder) screen).villagertradeswap$setRerollCost(payload.cost());
+            ((RerollScreen) screen).villagertradeswap$setRerollCost(payload.cost());
         }
     }
 }

@@ -1,3 +1,10 @@
 {
+  "villagertradeswap.button.reroll": "Swap this trade",
+  "villagertradeswap.cost.free": "Free",
+  "villagertradeswap.cost.emerald": "1 Emerald",
+  "villagertradeswap.cost.emeralds": "%s Emeralds",
+  "villagertradeswap.cost.not_enough": "Not enough emeralds: needs %s",
+  "villagertradeswap.toggle.hide": "Hide the trade swap buttons",
+  "villagertradeswap.toggle.show": "Show the trade swap buttons",
   "villagertradeswap.message.no_trade": "No other trade is available for this slot"
 }

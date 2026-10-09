@@ -1,3 +1,10 @@
 {
+  "villagertradeswap.button.reroll": "Tukar trade ini",
+  "villagertradeswap.cost.free": "Gratis",
+  "villagertradeswap.cost.emerald": "1 Zamrud",
+  "villagertradeswap.cost.emeralds": "%s Zamrud",
+  "villagertradeswap.cost.not_enough": "Zamrud tidak cukup: perlu %s",
+  "villagertradeswap.toggle.hide": "Sembunyikan tombol tukar trade",
+  "villagertradeswap.toggle.show": "Tampilkan tombol tukar trade",
   "villagertradeswap.message.no_trade": "Tidak ada trade lain untuk slot ini"
 }

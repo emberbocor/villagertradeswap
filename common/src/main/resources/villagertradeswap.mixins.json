@@ -12,6 +12,7 @@
     "ZombieVillagerMixin"
   ],
   "client": [
+    "AbstractContainerScreenMixin",
     "MerchantScreenMixin"
   ],
   "injectors": {
