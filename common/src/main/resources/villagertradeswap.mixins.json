@@ -2,7 +2,8 @@
   "required": true,
   "minVersion": "0.8",
   "package": "io.github.emberbocor.villagertradeswap.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "refmap": "villagertradeswap.refmap.json",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
     "MerchantMenuAccessor",
     "MobMixin",

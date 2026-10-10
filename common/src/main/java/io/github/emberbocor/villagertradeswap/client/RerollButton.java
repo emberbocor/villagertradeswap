@@ -1,13 +1,14 @@
 package io.github.emberbocor.villagertradeswap.client;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public final class RerollButton extends MouseOnlyButton {
     public static final int SIZE = 14;
-    private static final WidgetSprites SPRITES = new WidgetSprites(sprite("reroll"), sprite("reroll_disabled"), sprite("reroll_highlighted"));
+    private static final ResourceLocation TEXTURE = texture("reroll");
+    private static final ResourceLocation HIGHLIGHTED_TEXTURE = texture("reroll_highlighted");
+    private static final ResourceLocation DISABLED_TEXTURE = texture("reroll_disabled");
     private static final Component TITLE = Component.translatable("villagertradeswap.button.reroll");
 
     private final Runnable action;
@@ -28,8 +29,11 @@ public final class RerollButton extends MouseOnlyButton {
     }
 
     @Override
-    protected ResourceLocation sprite() {
-        return SPRITES.get(active, isHovered());
+    protected ResourceLocation texture() {
+        if (!active) {
+            return DISABLED_TEXTURE;
+        }
+        return isHovered() ? HIGHLIGHTED_TEXTURE : TEXTURE;
     }
 
     @Override

@@ -1,14 +1,15 @@
 package io.github.emberbocor.villagertradeswap.client;
 
 import io.github.emberbocor.villagertradeswap.config.ClientConfig;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public final class RerollToggle extends MouseOnlyButton {
     public static final int SIZE = 11;
-    private static final WidgetSprites SPRITES = new WidgetSprites(
-            sprite("toggle_on"), sprite("toggle_off"), sprite("toggle_on_highlighted"), sprite("toggle_off_highlighted"));
+    private static final ResourceLocation ON_TEXTURE = texture("toggle_on");
+    private static final ResourceLocation ON_HIGHLIGHTED_TEXTURE = texture("toggle_on_highlighted");
+    private static final ResourceLocation OFF_TEXTURE = texture("toggle_off");
+    private static final ResourceLocation OFF_HIGHLIGHTED_TEXTURE = texture("toggle_off_highlighted");
     private static final Component HIDE = Component.translatable("villagertradeswap.toggle.hide");
     private static final Component SHOW = Component.translatable("villagertradeswap.toggle.show");
 
@@ -22,8 +23,11 @@ public final class RerollToggle extends MouseOnlyButton {
     }
 
     @Override
-    protected ResourceLocation sprite() {
-        return SPRITES.get(isOn(), isHovered());
+    protected ResourceLocation texture() {
+        if (isOn()) {
+            return isHovered() ? ON_HIGHLIGHTED_TEXTURE : ON_TEXTURE;
+        }
+        return isHovered() ? OFF_HIGHLIGHTED_TEXTURE : OFF_TEXTURE;
     }
 
     @Override

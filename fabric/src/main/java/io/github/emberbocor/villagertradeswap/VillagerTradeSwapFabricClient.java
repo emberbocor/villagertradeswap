@@ -8,6 +8,9 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 public class VillagerTradeSwapFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ClientPlayNetworking.registerGlobalReceiver(RerollInfoPayload.TYPE, (payload, context) -> ClientPayloadHandler.handleRerollInfo(payload));
+        ClientPlayNetworking.registerGlobalReceiver(RerollInfoPayload.ID, (client, handler, buf, responseSender) -> {
+            RerollInfoPayload payload = RerollInfoPayload.read(buf);
+            client.execute(() -> ClientPayloadHandler.handleRerollInfo(payload));
+        });
     }
 }

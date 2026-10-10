@@ -12,9 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
-import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.trading.MerchantOffer;
 
 final class RerollCandidates {
@@ -34,10 +32,7 @@ final class RerollCandidates {
         RandomSource random = villager.getRandom();
         List<VillagerTrades.ItemListing> remaining = new ArrayList<>(Arrays.asList(listings));
         while (!remaining.isEmpty()) {
-            VillagerTrades.ItemListing listing = unwrap(villager, remaining.remove(random.nextInt(remaining.size())));
-            if (listing == null) {
-                continue;
-            }
+            VillagerTrades.ItemListing listing = remaining.remove(random.nextInt(remaining.size()));
             MerchantOffer offer = MapTrades.isMapTrade(listing)
                     ? MapTrades.createOffer(villager, listing, takenKinds)
                     : listing.getOffer(villager, random);
@@ -50,21 +45,7 @@ final class RerollCandidates {
 
     @Nullable
     private static VillagerTrades.ItemListing[] listings(Villager villager, int level) {
-        VillagerProfession profession = villager.getVillagerData().getProfession();
-        Int2ObjectMap<VillagerTrades.ItemListing[]> pool = null;
-        if (villager.level().enabledFeatures().contains(FeatureFlags.TRADE_REBALANCE)) {
-            pool = VillagerTrades.EXPERIMENTAL_TRADES.get(profession);
-        }
-        if (pool == null) {
-            pool = VillagerTrades.TRADES.get(profession);
-        }
+        Int2ObjectMap<VillagerTrades.ItemListing[]> pool = VillagerTrades.TRADES.get(villager.getVillagerData().getProfession());
         return pool != null ? pool.get(level) : null;
-    }
-
-    @Nullable
-    private static VillagerTrades.ItemListing unwrap(Villager villager, VillagerTrades.ItemListing listing) {
-        return listing instanceof VillagerTrades.TypeSpecificTrade typeSpecific
-                ? typeSpecific.trades().get(villager.getVillagerData().getType())
-                : listing;
     }
 }

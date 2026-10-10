@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import io.github.emberbocor.villagertradeswap.mixin.TreasureMapForEmeraldsAccessor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
-import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -50,8 +48,8 @@ final class MapTrades {
         ItemStack stack = MapItem.create(level, target.getX(), target.getZ(), (byte) 2, true, true);
         MapItem.renderBiomePreviewMap(level, stack);
         MapItemSavedData.addTargetDecoration(stack, target, "+", map.villagertradeswap$getDestinationType());
-        stack.set(DataComponents.ITEM_NAME, Component.translatable(map.villagertradeswap$getDisplayName()));
-        return new MerchantOffer(new ItemCost(Items.EMERALD, map.villagertradeswap$getEmeraldCost()), Optional.of(new ItemCost(Items.COMPASS)),
+        stack.setHoverName(Component.translatable(map.villagertradeswap$getDisplayName()));
+        return new MerchantOffer(new ItemStack(Items.EMERALD, map.villagertradeswap$getEmeraldCost()), new ItemStack(Items.COMPASS),
                 stack, map.villagertradeswap$getMaxUses(), map.villagertradeswap$getVillagerXp(), 0.2F);
     }
 

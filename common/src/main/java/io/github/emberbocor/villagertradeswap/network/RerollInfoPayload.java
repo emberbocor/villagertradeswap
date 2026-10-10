@@ -1,21 +1,18 @@
 package io.github.emberbocor.villagertradeswap.network;
 
 import io.github.emberbocor.villagertradeswap.VillagerTradeSwap;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
-public record RerollInfoPayload(int containerId, int cost) implements CustomPacketPayload {
-    public static final Type<RerollInfoPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(VillagerTradeSwap.MODID, "reroll_info"));
-    public static final StreamCodec<ByteBuf, RerollInfoPayload> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, RerollInfoPayload::containerId,
-            ByteBufCodecs.VAR_INT, RerollInfoPayload::cost,
-            RerollInfoPayload::new);
+public record RerollInfoPayload(int containerId, int cost) {
+    public static final ResourceLocation ID = new ResourceLocation(VillagerTradeSwap.MODID, "reroll_info");
 
-    @Override
-    public Type<RerollInfoPayload> type() {
-        return TYPE;
+    public static RerollInfoPayload read(FriendlyByteBuf buf) {
+        return new RerollInfoPayload(buf.readVarInt(), buf.readVarInt());
+    }
+
+    public void write(FriendlyByteBuf buf) {
+        buf.writeVarInt(containerId);
+        buf.writeVarInt(cost);
     }
 }

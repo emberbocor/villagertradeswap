@@ -99,7 +99,7 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
         toggle.setPosition(leftPos + Math.min(labelRight + 3, TOGGLE_MAX_X), topPos + TOGGLE_Y);
 
         boolean showButtons = available && toggle.isOn();
-        int cost = available && !minecraft.player.hasInfiniteMaterials() ? villagertradeswap$rerollCost.getAsInt() : 0;
+        int cost = available && !minecraft.player.getAbilities().instabuild ? villagertradeswap$rerollCost.getAsInt() : 0;
         boolean affordable = Emeralds.count(minecraft.player.getInventory()) >= cost;
         int offerCount = menu.getOffers().size();
         for (int row = 0; row < villagertradeswap$rerollButtons.size(); row++) {

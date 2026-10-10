@@ -8,6 +8,7 @@ import io.github.emberbocor.villagertradeswap.mixin.MerchantMenuAccessor;
 import io.github.emberbocor.villagertradeswap.network.RerollTradePayload;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -35,7 +36,7 @@ public final class RerollHandler {
         }
         MerchantOffers offers = villager.getOffers();
         int index = payload.offerIndex();
-        int cost = player.hasInfiniteMaterials() ? 0 : ServerConfig.rerollCost();
+        int cost = player.getAbilities().instabuild ? 0 : ServerConfig.rerollCost();
         if (index < 0 || index >= offers.size() || Emeralds.count(player.getInventory()) < cost) {
             return;
         }
@@ -43,7 +44,7 @@ public final class RerollHandler {
         int[] levels = holder.villagertradeswap$getOfferLevels();
         MerchantOffer offer = levels != null ? RerollCandidates.roll(villager, offers, levels, index) : null;
         if (offer == null) {
-            villager.makeSound(SoundEvents.VILLAGER_NO);
+            playSound(villager, SoundEvents.VILLAGER_NO);
             player.displayClientMessage(Component.translatable("villagertradeswap.message.no_trade"), true);
             return;
         }
@@ -56,7 +57,11 @@ public final class RerollHandler {
         menu.slotsChanged(menu.getSlot(0).container);
         player.sendMerchantOffers(menu.containerId, offers, villager.getVillagerData().getLevel(), villager.getVillagerXp(),
                 villager.showProgressBar(), villager.canRestock());
-        villager.makeSound(SoundEvents.VILLAGER_YES);
+        playSound(villager, SoundEvents.VILLAGER_YES);
+    }
+
+    private static void playSound(Villager villager, SoundEvent sound) {
+        villager.playSound(sound, 1.0F, villager.getVoicePitch());
     }
 
     private static boolean canReroll(Villager villager, ServerPlayer player) {

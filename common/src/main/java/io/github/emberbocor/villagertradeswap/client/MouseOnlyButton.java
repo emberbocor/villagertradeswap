@@ -20,15 +20,15 @@ abstract class MouseOnlyButton extends AbstractButton {
         super(0, 0, size, size, message);
     }
 
-    static ResourceLocation sprite(String name) {
-        return ResourceLocation.fromNamespaceAndPath(VillagerTradeSwap.MODID, name);
+    static ResourceLocation texture(String name) {
+        return new ResourceLocation(VillagerTradeSwap.MODID, "textures/gui/" + name + ".png");
     }
 
-    protected abstract ResourceLocation sprite();
+    protected abstract ResourceLocation texture();
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(sprite(), getX(), getY(), getWidth(), getHeight());
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        guiGraphics.blit(texture(), getX(), getY(), 0.0F, 0.0F, getWidth(), getHeight(), getWidth(), getHeight());
     }
 
     void setTooltipText(Component text) {
