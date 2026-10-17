@@ -12,8 +12,6 @@ import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.PacketDistributor;
 
 public final class ForgeNetwork {
-    private static final int PROTOCOL_VERSION = 1;
-
     private static Channel<CustomPacketPayload> channel;
 
     private ForgeNetwork() {
@@ -21,11 +19,11 @@ public final class ForgeNetwork {
 
     public static void register() {
         channel = ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(VillagerTradeSwap.MODID, "main"))
-                .networkProtocolVersion(PROTOCOL_VERSION)
+                .networkProtocolVersion(VillagerTradeSwap.NETWORK_VERSION)
                 .payloadChannel()
                 .play()
                 .clientbound()
-                .addMain(RerollInfoPayload.TYPE, RerollInfoPayload.STREAM_CODEC.cast(),
+                .addMain(RerollInfoPayload.TYPE, RerollInfoPayload.STREAM_CODEC,
                         (payload, context) -> ClientPayloadHandler.handleRerollInfo(payload))
                 .serverbound()
                 .addMain(RerollTradePayload.TYPE, RerollTradePayload.STREAM_CODEC.cast(), (payload, context) -> {

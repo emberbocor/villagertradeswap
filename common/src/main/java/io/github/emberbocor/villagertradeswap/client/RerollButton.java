@@ -17,11 +17,10 @@ public final class RerollButton extends MouseOnlyButton {
         this.action = action;
     }
 
-    public void setCost(int cost, boolean affordable) {
+    public void setPrice(Component currencyName, int cost, boolean affordable) {
         active = affordable;
         Component price = cost == 0 ? Component.translatable("villagertradeswap.cost.free")
-                : cost == 1 ? Component.translatable("villagertradeswap.cost.emerald")
-                : Component.translatable("villagertradeswap.cost.emeralds", cost);
+                : Component.translatable("villagertradeswap.cost.items", cost, currencyName);
         Component detail = affordable ? price.copy().withStyle(ChatFormatting.GRAY)
                 : Component.translatable("villagertradeswap.cost.not_enough", price).withStyle(ChatFormatting.RED);
         setTooltipText(TITLE.copy().append("\n").append(detail));

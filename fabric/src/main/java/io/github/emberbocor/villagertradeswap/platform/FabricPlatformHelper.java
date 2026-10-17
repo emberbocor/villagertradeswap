@@ -2,6 +2,7 @@ package io.github.emberbocor.villagertradeswap.platform;
 
 import java.nio.file.Path;
 
+import io.github.emberbocor.villagertradeswap.network.FabricNetwork;
 import io.github.emberbocor.villagertradeswap.network.RerollInfoPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
@@ -15,11 +16,11 @@ public final class FabricPlatformHelper implements PlatformHelper {
 
     @Override
     public boolean canSendRerollInfo(ServerPlayer player) {
-        return ServerPlayNetworking.canSend(player, RerollInfoPayload.TYPE);
+        return ServerPlayNetworking.canSend(player, FabricNetwork.Info.TYPE);
     }
 
     @Override
     public void sendRerollInfo(ServerPlayer player, RerollInfoPayload payload) {
-        ServerPlayNetworking.send(player, payload);
+        ServerPlayNetworking.send(player, new FabricNetwork.Info(payload));
     }
 }

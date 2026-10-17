@@ -16,7 +16,7 @@ public final class RerollInfoSync {
         if (container instanceof MerchantMenu menu
                 && ((MerchantMenuAccessor) menu).villagertradeswap$getTrader() instanceof Villager
                 && Services.PLATFORM.canSendRerollInfo(player)) {
-            Services.PLATFORM.sendRerollInfo(player, new RerollInfoPayload(menu.containerId, ServerConfig.rerollCost()));
+            Services.PLATFORM.sendRerollInfo(player, new RerollInfoPayload(menu.containerId, ServerConfig.rerollCurrency(), ServerConfig.rerollCost()));
         }
     }
 }

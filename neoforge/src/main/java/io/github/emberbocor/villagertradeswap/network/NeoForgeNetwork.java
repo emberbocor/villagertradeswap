@@ -1,5 +1,6 @@
 package io.github.emberbocor.villagertradeswap.network;
 
+import io.github.emberbocor.villagertradeswap.VillagerTradeSwap;
 import io.github.emberbocor.villagertradeswap.client.ClientPayloadHandler;
 import io.github.emberbocor.villagertradeswap.trade.RerollHandler;
 import net.minecraft.server.level.ServerPlayer;
@@ -7,13 +8,11 @@ import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 public final class NeoForgeNetwork {
-    private static final String PROTOCOL_VERSION = "1";
-
     private NeoForgeNetwork() {
     }
 
     public static void register(RegisterPayloadHandlersEvent event) {
-        event.registrar(PROTOCOL_VERSION)
+        event.registrar(Integer.toString(VillagerTradeSwap.NETWORK_VERSION))
                 .playToClient(RerollInfoPayload.TYPE, RerollInfoPayload.STREAM_CODEC,
                         (payload, context) -> ClientPayloadHandler.handleRerollInfo(payload))
                 .playToServer(RerollTradePayload.TYPE, RerollTradePayload.STREAM_CODEC,
