@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -20,23 +21,26 @@ final class RerollCandidates {
     }
 
     @Nullable
-    static MerchantOffer roll(Villager villager, List<MerchantOffer> offers, int[] levels, int index) {
+    static MerchantOffer roll(Villager villager, List<MerchantOffer> offers, int[] levels, int index, boolean allowSameKindInLevel) {
         VillagerTrades.ItemListing[] listings = listings(villager, levels[index]);
         if (listings == null) {
             return null;
         }
-        Set<TradeKind> takenKinds = IntStream.range(0, offers.size())
+        List<TradeIdentity> takenTrades = offers.stream().map(TradeIdentity::of).toList();
+        Set<TradeKind> takenKinds = allowSameKindInLevel ? Set.of() : IntStream.range(0, offers.size())
                 .filter(i -> i != index && levels[i] == levels[index])
                 .mapToObj(i -> TradeKind.of(offers.get(i)))
                 .collect(Collectors.toSet());
+        Predicate<TradeIdentity> allowed = trade -> !takenTrades.contains(trade) && !takenKinds.contains(trade.kind());
+
         RandomSource random = villager.getRandom();
         List<VillagerTrades.ItemListing> remaining = new ArrayList<>(Arrays.asList(listings));
         while (!remaining.isEmpty()) {
             VillagerTrades.ItemListing listing = remaining.remove(random.nextInt(remaining.size()));
             MerchantOffer offer = MapTrades.isMapTrade(listing)
-                    ? MapTrades.createOffer(villager, listing, takenKinds)
+                    ? MapTrades.createOffer(villager, listing, allowed)
                     : listing.getOffer(villager, random);
-            if (offer != null && !takenKinds.contains(TradeKind.of(offer))) {
+            if (offer != null && allowed.test(TradeIdentity.of(offer))) {
                 return offer;
             }
         }

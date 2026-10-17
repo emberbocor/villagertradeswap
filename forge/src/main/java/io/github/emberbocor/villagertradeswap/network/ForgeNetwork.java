@@ -12,7 +12,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class ForgeNetwork {
-    private static final String PROTOCOL_VERSION = "1";
+    private static final String PROTOCOL_VERSION = Integer.toString(VillagerTradeSwap.NETWORK_VERSION);
 
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(VillagerTradeSwap.MODID, "main"),
             () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);

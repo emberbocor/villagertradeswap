@@ -2,7 +2,6 @@ package io.github.emberbocor.villagertradeswap.mixin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalInt;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -14,17 +13,19 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.github.emberbocor.villagertradeswap.client.RerollButton;
+import io.github.emberbocor.villagertradeswap.client.RerollPrice;
 import io.github.emberbocor.villagertradeswap.client.RerollScreen;
 import io.github.emberbocor.villagertradeswap.client.RerollToggle;
 import io.github.emberbocor.villagertradeswap.network.RerollTradePayload;
 import io.github.emberbocor.villagertradeswap.platform.ClientServices;
-import io.github.emberbocor.villagertradeswap.trade.Emeralds;
+import io.github.emberbocor.villagertradeswap.trade.Currency;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MerchantMenu;
+import net.minecraft.world.item.Item;
 
 @Mixin(MerchantScreen.class)
 public abstract class MerchantScreenMixin extends AbstractContainerScreen<MerchantMenu> implements RerollScreen {
@@ -48,7 +49,8 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
     int scrollOff;
 
     @Unique
-    private OptionalInt villagertradeswap$rerollCost = OptionalInt.empty();
+    @Nullable
+    private RerollPrice villagertradeswap$rerollPrice;
     @Unique
     private final List<RerollButton> villagertradeswap$rerollButtons = new ArrayList<>();
     @Unique
@@ -60,8 +62,8 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
     }
 
     @Override
-    public void villagertradeswap$setRerollCost(int cost) {
-        villagertradeswap$rerollCost = OptionalInt.of(cost);
+    public void villagertradeswap$setRerollPrice(Item currency, int cost) {
+        villagertradeswap$rerollPrice = RerollPrice.of(currency, cost);
         villagertradeswap$updateRerollWidgets();
     }
 
@@ -92,28 +94,31 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
         if (toggle == null || minecraft == null || minecraft.player == null) {
             return;
         }
-        boolean available = villagertradeswap$rerollCost.isPresent();
+        RerollPrice price = villagertradeswap$rerollPrice;
         int labelWidth = font.width(TRADES_LABEL);
         int labelRight = 5 - labelWidth / 2 + 48 + labelWidth;
-        toggle.visible = available;
+        toggle.visible = price != null;
         toggle.setPosition(leftPos + Math.min(labelRight + 3, TOGGLE_MAX_X), topPos + TOGGLE_Y);
 
-        boolean showButtons = available && toggle.isOn();
-        int cost = available && !minecraft.player.getAbilities().instabuild ? villagertradeswap$rerollCost.getAsInt() : 0;
-        boolean affordable = Emeralds.count(minecraft.player.getInventory()) >= cost;
+        if (price == null) {
+            villagertradeswap$rerollButtons.forEach(button -> button.visible = false);
+            return;
+        }
+        int cost = minecraft.player.getAbilities().instabuild ? 0 : price.cost();
+        boolean affordable = Currency.count(minecraft.player.getInventory(), price.currency()) >= cost;
         int offerCount = menu.getOffers().size();
         for (int row = 0; row < villagertradeswap$rerollButtons.size(); row++) {
             RerollButton button = villagertradeswap$rerollButtons.get(row);
-            button.visible = showButtons && scrollOff + row < offerCount;
+            button.visible = toggle.isOn() && scrollOff + row < offerCount;
             button.setPosition(leftPos - RerollButton.SIZE - BUTTON_GAP, topPos + FIRST_ROW_Y + row * ROW_HEIGHT + (ROW_HEIGHT - RerollButton.SIZE) / 2);
-            button.setCost(cost, affordable);
+            button.setPrice(price.currencyName(), cost, affordable);
         }
     }
 
     @Unique
     private void villagertradeswap$requestReroll(int row) {
         int index = scrollOff + row;
-        if (villagertradeswap$rerollCost.isPresent() && index < menu.getOffers().size()) {
+        if (villagertradeswap$rerollPrice != null && index < menu.getOffers().size()) {
             ClientServices.PLATFORM.sendRerollRequest(new RerollTradePayload(menu.containerId, index));
         }
     }

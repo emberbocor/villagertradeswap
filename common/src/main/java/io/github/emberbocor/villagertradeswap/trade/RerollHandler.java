@@ -13,6 +13,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.inventory.MerchantMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 
@@ -36,20 +37,21 @@ public final class RerollHandler {
         }
         MerchantOffers offers = villager.getOffers();
         int index = payload.offerIndex();
+        Item currency = ServerConfig.rerollCurrency();
         int cost = player.getAbilities().instabuild ? 0 : ServerConfig.rerollCost();
-        if (index < 0 || index >= offers.size() || Emeralds.count(player.getInventory()) < cost) {
+        if (index < 0 || index >= offers.size() || Currency.count(player.getInventory(), currency) < cost) {
             return;
         }
         OfferLevelsHolder holder = (OfferLevelsHolder) villager;
         int[] levels = holder.villagertradeswap$getOfferLevels();
-        MerchantOffer offer = levels != null ? RerollCandidates.roll(villager, offers, levels, index) : null;
+        MerchantOffer offer = levels != null ? RerollCandidates.roll(villager, offers, levels, index, ServerConfig.allowSameTradeInLevel()) : null;
         if (offer == null) {
             playSound(villager, SoundEvents.VILLAGER_NO);
             player.displayClientMessage(Component.translatable("villagertradeswap.message.no_trade"), true);
             return;
         }
         if (cost > 0) {
-            Emeralds.take(player.getInventory(), cost);
+            Currency.take(player.getInventory(), currency, cost);
         }
         SpecialPrices.apply(villager, player, offer);
         offers.set(index, offer);
