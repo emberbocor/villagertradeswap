@@ -2,8 +2,9 @@ package io.github.emberbocor.villagertradeswap.client;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class RerollButton extends MouseOnlyButton {
     public static final int SIZE = 14;
@@ -27,12 +28,12 @@ public final class RerollButton extends MouseOnlyButton {
     }
 
     @Override
-    protected ResourceLocation sprite() {
+    protected Identifier sprite() {
         return SPRITES.get(active, isHovered());
     }
 
     @Override
-    public void onPress() {
+    public void onPress(InputWithModifiers input) {
         action.run();
     }
 }

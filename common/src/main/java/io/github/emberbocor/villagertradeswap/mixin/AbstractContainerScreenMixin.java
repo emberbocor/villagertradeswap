@@ -11,8 +11,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin {
     @Inject(method = "hasClickedOutside", at = @At("HEAD"), cancellable = true)
-    private void villagertradeswap$keepClicksOnRerollButtons(double mouseX, double mouseY, int guiLeft, int guiTop, int mouseButton,
-            CallbackInfoReturnable<Boolean> cir) {
+    private void villagertradeswap$keepClicksOnRerollButtons(double mouseX, double mouseY, int guiLeft, int guiTop, CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof RerollScreen screen && screen.villagertradeswap$isOverRerollButton(mouseX, mouseY)) {
             cir.setReturnValue(false);
         }

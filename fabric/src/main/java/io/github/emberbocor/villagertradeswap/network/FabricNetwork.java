@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class FabricNetwork {
     private FabricNetwork() {
@@ -22,7 +22,7 @@ public final class FabricNetwork {
 
     // Fabric does not compare channel versions, so the version is part of the channel id.
     private static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> versionedType(CustomPacketPayload.Type<?> type) {
-        return new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(VillagerTradeSwap.MODID,
+        return new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(VillagerTradeSwap.MODID,
                 type.id().getPath() + "_v" + VillagerTradeSwap.NETWORK_VERSION));
     }
 

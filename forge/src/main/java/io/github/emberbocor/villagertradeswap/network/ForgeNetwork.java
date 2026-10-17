@@ -4,7 +4,7 @@ import io.github.emberbocor.villagertradeswap.VillagerTradeSwap;
 import io.github.emberbocor.villagertradeswap.client.ClientPayloadHandler;
 import io.github.emberbocor.villagertradeswap.trade.RerollHandler;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.network.Channel;
@@ -18,7 +18,7 @@ public final class ForgeNetwork {
     }
 
     public static void register() {
-        channel = ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(VillagerTradeSwap.MODID, "main"))
+        channel = ChannelBuilder.named(Identifier.fromNamespaceAndPath(VillagerTradeSwap.MODID, "main"))
                 .networkProtocolVersion(VillagerTradeSwap.NETWORK_VERSION)
                 .payloadChannel()
                 .play()

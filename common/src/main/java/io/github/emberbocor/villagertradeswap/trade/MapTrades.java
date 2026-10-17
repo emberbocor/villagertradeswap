@@ -17,8 +17,8 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
@@ -54,11 +54,11 @@ final class MapTrades {
     }
 
     @Nullable
-    static MerchantOffer createOffer(Villager villager, VillagerTrades.ItemListing listing, Predicate<TradeIdentity> allowed) {
+    static MerchantOffer createOffer(ServerLevel level, Villager villager, VillagerTrades.ItemListing listing, Predicate<TradeIdentity> allowed) {
         TreasureMapForEmeraldsAccessor map = (TreasureMapForEmeraldsAccessor) listing;
         Component name = Component.translatable(map.villagertradeswap$getDisplayName());
         Destination destination = new Destination(name, Set.of(map.villagertradeswap$getDestinationType()));
-        if (!allowed.test(new TradeIdentity(KIND, destination)) || !(villager.level() instanceof ServerLevel level)) {
+        if (!allowed.test(new TradeIdentity(KIND, destination))) {
             return null;
         }
         BlockPos target = locate(level, map.villagertradeswap$getDestination(), villager.blockPosition());

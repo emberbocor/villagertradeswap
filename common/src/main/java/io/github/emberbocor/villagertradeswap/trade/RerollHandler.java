@@ -6,11 +6,12 @@ import java.util.WeakHashMap;
 import io.github.emberbocor.villagertradeswap.config.ServerConfig;
 import io.github.emberbocor.villagertradeswap.mixin.MerchantMenuAccessor;
 import io.github.emberbocor.villagertradeswap.network.RerollTradePayload;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -23,7 +24,7 @@ public final class RerollHandler {
     }
 
     public static void handle(ServerPlayer player, RerollTradePayload payload) {
-        int tick = player.server.getTickCount();
+        int tick = player.level().getServer().getTickCount();
         Integer lastTick = LAST_REROLL_TICK.put(player, tick);
         if (lastTick != null && lastTick == tick) {
             return;
@@ -43,7 +44,7 @@ public final class RerollHandler {
         }
         OfferLevelsHolder holder = (OfferLevelsHolder) villager;
         int[] levels = holder.villagertradeswap$getOfferLevels();
-        MerchantOffer offer = levels != null ? RerollCandidates.roll(villager, offers, levels, index, ServerConfig.allowSameTradeInLevel()) : null;
+        MerchantOffer offer = levels != null ? RerollCandidates.roll(player.level(), villager, offers, levels, index, ServerConfig.allowSameTradeInLevel()) : null;
         if (offer == null) {
             villager.makeSound(SoundEvents.VILLAGER_NO);
             player.displayClientMessage(Component.translatable("villagertradeswap.message.no_trade"), true);
@@ -56,17 +57,17 @@ public final class RerollHandler {
         offers.set(index, offer);
         holder.villagertradeswap$setOfferLevels(levels);
         menu.slotsChanged(menu.getSlot(0).container);
-        player.sendMerchantOffers(menu.containerId, offers, villager.getVillagerData().getLevel(), villager.getVillagerXp(),
+        player.sendMerchantOffers(menu.containerId, offers, villager.getVillagerData().level(), villager.getVillagerXp(),
                 villager.showProgressBar(), villager.canRestock());
         villager.makeSound(SoundEvents.VILLAGER_YES);
     }
 
     private static boolean canReroll(Villager villager, ServerPlayer player) {
-        VillagerProfession profession = villager.getVillagerData().getProfession();
+        Holder<VillagerProfession> profession = villager.getVillagerData().profession();
         return villager.isAlive()
                 && !villager.isBaby()
                 && villager.getTradingPlayer() == player
-                && profession != VillagerProfession.NONE
-                && profession != VillagerProfession.NITWIT;
+                && !profession.is(VillagerProfession.NONE)
+                && !profession.is(VillagerProfession.NITWIT);
     }
 }

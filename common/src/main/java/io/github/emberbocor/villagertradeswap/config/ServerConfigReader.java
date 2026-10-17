@@ -11,7 +11,7 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 import io.github.emberbocor.villagertradeswap.VillagerTradeSwap;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -65,7 +65,7 @@ final class ServerConfigReader {
             warn("{} must be a single item id, item tags like \"{}\" are not supported; using \"{}\"", ServerConfigFile.REROLL_CURRENCY, text, fallbackId);
             return fallback;
         }
-        ResourceLocation id = ResourceLocation.tryParse(text);
+        Identifier id = Identifier.tryParse(text);
         Optional<Item> item = id != null ? BuiltInRegistries.ITEM.getOptional(id) : Optional.empty();
         if (item.isEmpty()) {
             warn("{} \"{}\" is not a known item id; using \"{}\"", ServerConfigFile.REROLL_CURRENCY, text, fallbackId);

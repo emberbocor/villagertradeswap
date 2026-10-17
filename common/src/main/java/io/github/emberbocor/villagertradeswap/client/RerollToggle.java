@@ -2,8 +2,9 @@ package io.github.emberbocor.villagertradeswap.client;
 
 import io.github.emberbocor.villagertradeswap.config.ClientConfig;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class RerollToggle extends MouseOnlyButton {
     public static final int SIZE = 11;
@@ -22,12 +23,12 @@ public final class RerollToggle extends MouseOnlyButton {
     }
 
     @Override
-    protected ResourceLocation sprite() {
+    protected Identifier sprite() {
         return SPRITES.get(isOn(), isHovered());
     }
 
     @Override
-    public void onPress() {
+    public void onPress(InputWithModifiers input) {
         ClientConfig.setShowRerollButtons(!isOn());
         updateTooltip();
     }

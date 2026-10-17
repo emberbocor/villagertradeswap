@@ -83,7 +83,7 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
         villagertradeswap$updateRerollWidgets();
     }
 
-    @Inject(method = "render", at = @At("HEAD"))
+    @Inject(method = "renderContents", at = @At("HEAD"))
     private void villagertradeswap$updateRerollWidgetsOnRender(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         villagertradeswap$updateRerollWidgets();
     }

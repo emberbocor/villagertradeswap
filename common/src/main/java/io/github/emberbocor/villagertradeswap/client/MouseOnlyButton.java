@@ -9,8 +9,10 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.FocusNavigationEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 abstract class MouseOnlyButton extends AbstractButton {
     @Nullable
@@ -20,15 +22,15 @@ abstract class MouseOnlyButton extends AbstractButton {
         super(0, 0, size, size, message);
     }
 
-    static ResourceLocation sprite(String name) {
-        return ResourceLocation.fromNamespaceAndPath(VillagerTradeSwap.MODID, name);
+    static Identifier sprite(String name) {
+        return Identifier.fromNamespaceAndPath(VillagerTradeSwap.MODID, name);
     }
 
-    protected abstract ResourceLocation sprite();
+    protected abstract Identifier sprite();
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(sprite(), getX(), getY(), getWidth(), getHeight());
+    protected void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite(), getX(), getY(), getWidth(), getHeight());
     }
 
     void setTooltipText(Component text) {
@@ -47,7 +49,7 @@ abstract class MouseOnlyButton extends AbstractButton {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
         return false;
     }
 

@@ -4,7 +4,7 @@ import io.github.emberbocor.villagertradeswap.config.ServerConfig;
 import io.github.emberbocor.villagertradeswap.mixin.MerchantMenuAccessor;
 import io.github.emberbocor.villagertradeswap.platform.Services;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MerchantMenu;
 

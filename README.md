@@ -4,7 +4,7 @@ Don't like one of a villager's trades? Swap just that one.
 
 Villager Trade Swap adds a small button next to every trade in the vanilla trading screen. Clicking it replaces that single trade with a new one from the vanilla trade pool, while every other trade, the villager's level, its experience and your reputation stay exactly as they were. Each swap costs one emerald by default; the price and the item you pay with can be changed in the server config.
 
-Available for NeoForge, Forge and Fabric.
+Available for NeoForge, Forge and Fabric on Minecraft 1.21.11. This is the 1.21.11 version; Minecraft 1.21.1 and 1.20.1 are supported by separate sets of jars.
 
 ## Features
 
@@ -27,12 +27,12 @@ Only regular villagers can be swapped: not wandering traders, baby villagers, ni
 
 | | NeoForge | Forge | Fabric |
 |---|---|---|---|
-| Minecraft | 1.21.1 | 1.21.1 | 1.21 or 1.21.1 |
-| Loader | NeoForge 21.1.1 or newer | Forge 52.0.0 or newer | Fabric Loader 0.15.11 or newer |
-| Other | | | Fabric API 0.102.0 or newer |
-| Jar | `villagertradeswap-neoforge-1.21.1-<version>.jar` | `villagertradeswap-forge-1.21.1-<version>.jar` | `villagertradeswap-fabric-1.21-1.21.1-<version>.jar` |
+| Minecraft | 1.21.11 | 1.21.11 | 1.21.11 |
+| Loader | NeoForge 21.11.42 or newer | Forge 61.0.1 or newer | Fabric Loader 0.17.3 or newer |
+| Other | | | Fabric API 0.139.5 or newer |
+| Jar | `villagertradeswap-neoforge-1.21.11-<version>.jar` | `villagertradeswap-forge-1.21.11-<version>.jar` | `villagertradeswap-fabric-1.21.11-<version>.jar` |
 
-On Minecraft 1.21.1, NeoForge and Forge are separate loaders that do not run each other's mods, so each has its own jar. Pick the jar that matches your loader.
+NeoForge and Forge are separate loaders that do not run each other's mods, so each has its own jar. Pick the jar that matches your loader.
 
 The Fabric jar bundles [NightConfig](https://github.com/TheElectronWill/night-config) (core and toml, LGPL-3.0) to read the TOML config. NeoForge and Forge already ship it.
 
@@ -43,14 +43,9 @@ The server decides the price and tells the client when a villager's trading scre
 - **NeoForge and Forge:** the mod is required on both the client and the server. Players without it cannot join a server that has it; the connection is refused at login.
 - **Fabric:** install it on both sides to swap trades. Players without the mod can still join a server that has it and trade normally, they just do not get the swap buttons. A client with the mod on a server without it also works; the buttons simply do not appear.
 
-### Updating from 1.0.0
+### Coming from the 1.21.1 version
 
-Version 1.1.0 changed what the server sends to the client, so the client and the server must both run 1.1.0.
-
-- **NeoForge and Forge:** a 1.0.0 client cannot join a 1.1.0 server and the other way round; the disconnect screen names Villager Trade Swap and the channel version that does not match.
-- **Fabric:** the two versions do not see each other's mod. The player can join and trade normally, but gets no swap buttons until both sides run 1.1.0.
-
-The old `config/villagertradeswap.json` is replaced by `config/villagertradeswap-server.toml` (see below). Your `rerollCost` is taken over automatically the first time 1.1.0 starts.
+The 1.21.11 version is 1.1.0 from the start; a 1.21.1 client cannot join a 1.21.11 server anyway, because the Minecraft versions differ. If the old `config/villagertradeswap.json` of 1.0.0 is still there, its `rerollCost` is taken over into `config/villagertradeswap-server.toml` the first time the mod starts (see below). A `villagertradeswap-server.toml` from the 1.21.1 version has the same format and is used as it is.
 
 ## Configuration
 
@@ -97,9 +92,16 @@ Your own values and comments are never rewritten. Options missing from the file 
 
 - `showRerollButtons`: whether the swap buttons are shown. This is the toggle next to the "Trades" label, saved automatically.
 
+## Upgrading a world from Minecraft 1.21.1
+
+Swapped trades are ordinary villager trades, so the game upgrades them like any other trade. The level the mod recorded for each trade is stored on the villager (and on zombie villagers) under the same key in both versions, and the game keeps it during the upgrade, so swapping keeps using the level each trade was unlocked at, also for villagers that are cured after the upgrade.
+
+The recorded levels are only used when their number matches the villager's trades. If it does not (for example because a trade could not be upgraded, or another mod changed the trades), the mod falls back to working out the levels from the order of the trades, two per level, as it does for villagers that existed before the mod was installed. Nothing breaks either way; at worst a swap rolls from the pool of a different level than the one the trade came from.
+
 ## Compatibility notes
 
-- **Villager Trade Peek:** works together. Swap buttons appear only on unlocked trades, never on the greyed-out locked rows Trade Peek adds below them. Swapping does not change the previewed future trades, and the trades Trade Peek unlocks on level-up are recognized as trades of that level.
+- **Villager Trade Peek** (1.21.11 version): works together. Swap buttons appear only on unlocked trades, never on the greyed-out locked rows Trade Peek adds below them. Swapping does not change the previewed future trades, and the trades Trade Peek unlocks on level-up are recognized as trades of that level.
+- **Villager Trade Labels** (1.21.11 version): works together. The labels follow the trade list, so a swapped trade shows the label of its new item.
 - **Trade Cycling and similar mods:** works together. When such a mod rerolls all of a villager's trades, the new trades are recorded as trades of the villager's current level.
 - Trades added by other mods through the standard villager trade event are part of the pool automatically.
 - Mods that change how many trades a villager gets per level, or that add trades in unusual ways, still work; when the mod cannot tell which level such a trade came from, it assumes two trades per level in list order.

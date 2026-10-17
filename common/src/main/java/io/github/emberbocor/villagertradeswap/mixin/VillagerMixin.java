@@ -11,12 +11,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import io.github.emberbocor.villagertradeswap.trade.OfferLevelStorage;
 import io.github.emberbocor.villagertradeswap.trade.OfferLevelTracker;
 import io.github.emberbocor.villagertradeswap.trade.OfferLevelsHolder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.npc.AbstractVillager;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.npc.VillagerData;
+import net.minecraft.world.entity.npc.villager.AbstractVillager;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.villager.VillagerData;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 @Mixin(Villager.class)
 public abstract class VillagerMixin extends AbstractVillager implements OfferLevelsHolder {
@@ -33,7 +34,7 @@ public abstract class VillagerMixin extends AbstractVillager implements OfferLev
     @Override
     @Nullable
     public int[] villagertradeswap$getOfferLevels() {
-        return offers != null ? villagertradeswap$offerLevels.resolve(offers, getVillagerData().getLevel()) : null;
+        return offers != null ? villagertradeswap$offerLevels.resolve(offers, getVillagerData().level()) : null;
     }
 
     @Override
@@ -49,17 +50,17 @@ public abstract class VillagerMixin extends AbstractVillager implements OfferLev
     @Inject(method = {"updateTrades", "increaseMerchantCareer"}, at = @At("TAIL"))
     private void villagertradeswap$recordNewOffers(CallbackInfo ci) {
         if (offers != null) {
-            villagertradeswap$offerLevels.assignUnknown(offers, getVillagerData().getLevel());
+            villagertradeswap$offerLevels.assignUnknown(offers, getVillagerData().level());
         }
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-    private void villagertradeswap$saveOfferLevels(CompoundTag tag, CallbackInfo ci) {
-        OfferLevelStorage.save(tag, villagertradeswap$getOfferLevels());
+    private void villagertradeswap$saveOfferLevels(ValueOutput output, CallbackInfo ci) {
+        OfferLevelStorage.save(output, villagertradeswap$getOfferLevels());
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-    private void villagertradeswap$loadOfferLevels(CompoundTag tag, CallbackInfo ci) {
-        villagertradeswap$setOfferLevels(OfferLevelStorage.load(tag));
+    private void villagertradeswap$loadOfferLevels(ValueInput input, CallbackInfo ci) {
+        villagertradeswap$setOfferLevels(OfferLevelStorage.load(input));
     }
 }

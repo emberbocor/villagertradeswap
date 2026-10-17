@@ -9,8 +9,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.github.emberbocor.villagertradeswap.trade.OfferLevelStorage;
 import io.github.emberbocor.villagertradeswap.trade.OfferLevelsHolder;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.monster.ZombieVillager;
+import net.minecraft.world.entity.monster.zombie.ZombieVillager;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 @Mixin(ZombieVillager.class)
 public abstract class ZombieVillagerMixin implements OfferLevelsHolder {
@@ -30,12 +31,12 @@ public abstract class ZombieVillagerMixin implements OfferLevelsHolder {
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-    private void villagertradeswap$saveOfferLevels(CompoundTag tag, CallbackInfo ci) {
-        OfferLevelStorage.save(tag, villagertradeswap$offerLevels);
+    private void villagertradeswap$saveOfferLevels(ValueOutput output, CallbackInfo ci) {
+        OfferLevelStorage.save(output, villagertradeswap$offerLevels);
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-    private void villagertradeswap$loadOfferLevels(CompoundTag tag, CallbackInfo ci) {
-        villagertradeswap$offerLevels = OfferLevelStorage.load(tag);
+    private void villagertradeswap$loadOfferLevels(ValueInput input, CallbackInfo ci) {
+        villagertradeswap$offerLevels = OfferLevelStorage.load(input);
     }
 }

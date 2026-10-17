@@ -11,10 +11,12 @@ import java.util.stream.IntStream;
 import org.jetbrains.annotations.Nullable;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.trading.MerchantOffer;
 
@@ -23,7 +25,7 @@ final class RerollCandidates {
     }
 
     @Nullable
-    static MerchantOffer roll(Villager villager, List<MerchantOffer> offers, int[] levels, int index, boolean allowSameKindInLevel) {
+    static MerchantOffer roll(ServerLevel level, Villager villager, List<MerchantOffer> offers, int[] levels, int index, boolean allowSameKindInLevel) {
         VillagerTrades.ItemListing[] listings = listings(villager, levels[index]);
         if (listings == null) {
             return null;
@@ -43,8 +45,8 @@ final class RerollCandidates {
                 continue;
             }
             MerchantOffer offer = MapTrades.isMapTrade(listing)
-                    ? MapTrades.createOffer(villager, listing, allowed)
-                    : listing.getOffer(villager, random);
+                    ? MapTrades.createOffer(level, villager, listing, allowed)
+                    : listing.getOffer(level, villager, random);
             if (offer != null && allowed.test(TradeIdentity.of(offer))) {
                 return offer;
             }
@@ -54,7 +56,10 @@ final class RerollCandidates {
 
     @Nullable
     private static VillagerTrades.ItemListing[] listings(Villager villager, int level) {
-        VillagerProfession profession = villager.getVillagerData().getProfession();
+        ResourceKey<VillagerProfession> profession = villager.getVillagerData().profession().unwrapKey().orElse(null);
+        if (profession == null) {
+            return null;
+        }
         Int2ObjectMap<VillagerTrades.ItemListing[]> pool = null;
         if (villager.level().enabledFeatures().contains(FeatureFlags.TRADE_REBALANCE)) {
             pool = VillagerTrades.EXPERIMENTAL_TRADES.get(profession);
@@ -68,7 +73,7 @@ final class RerollCandidates {
     @Nullable
     private static VillagerTrades.ItemListing unwrap(Villager villager, VillagerTrades.ItemListing listing) {
         return listing instanceof VillagerTrades.TypeSpecificTrade typeSpecific
-                ? typeSpecific.trades().get(villager.getVillagerData().getType())
+                ? typeSpecific.trades().get(villager.getVillagerData().type().unwrapKey().orElse(null))
                 : listing;
     }
 }

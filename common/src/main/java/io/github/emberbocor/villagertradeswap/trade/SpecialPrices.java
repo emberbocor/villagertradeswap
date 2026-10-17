@@ -1,7 +1,7 @@
 package io.github.emberbocor.villagertradeswap.trade;
 
 import io.github.emberbocor.villagertradeswap.mixin.VillagerInvoker;
-import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;

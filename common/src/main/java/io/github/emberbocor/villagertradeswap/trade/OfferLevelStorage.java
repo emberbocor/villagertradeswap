@@ -3,8 +3,8 @@ package io.github.emberbocor.villagertradeswap.trade;
 import org.jetbrains.annotations.Nullable;
 
 import io.github.emberbocor.villagertradeswap.VillagerTradeSwap;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public final class OfferLevelStorage {
     private static final String NBT_KEY = VillagerTradeSwap.MODID + ":offer_levels";
@@ -12,14 +12,14 @@ public final class OfferLevelStorage {
     private OfferLevelStorage() {
     }
 
-    public static void save(CompoundTag tag, @Nullable int[] levels) {
+    public static void save(ValueOutput output, @Nullable int[] levels) {
         if (levels != null && levels.length > 0) {
-            tag.putIntArray(NBT_KEY, levels);
+            output.putIntArray(NBT_KEY, levels);
         }
     }
 
     @Nullable
-    public static int[] load(CompoundTag tag) {
-        return tag.contains(NBT_KEY, Tag.TAG_INT_ARRAY) ? tag.getIntArray(NBT_KEY) : null;
+    public static int[] load(ValueInput input) {
+        return input.getIntArray(NBT_KEY).orElse(null);
     }
 }
