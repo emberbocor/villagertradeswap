@@ -2,20 +2,20 @@
 
 Don't like one of a villager's trades? Swap just that one.
 
-Villager Trade Swap adds a small button next to every trade in the vanilla trading screen. Clicking it replaces that single trade with a new one from the vanilla trade pool, while every other trade, the villager's level, its experience and your reputation stay exactly as they were. Each swap costs one emerald by default; the price and the item you pay with can be changed in the server config.
+Villager Trade Swap adds a small button next to every trade in the vanilla trading screen. Clicking it replaces that single trade with a new one from the villager's trade pool, while every other trade, the villager's level, its experience and your reputation stay exactly as they were. Each swap costs one emerald by default; the price and the item you pay with can be changed in the server config.
 
-Available for NeoForge, Forge and Fabric on Minecraft 1.21.11. This is the 1.21.11 version; Minecraft 1.21.1 and 1.20.1 are supported by separate sets of jars.
+Available for NeoForge, Forge and Fabric on Minecraft 26.1, 26.1.1 and 26.1.2. This is the 26.1-26.1.2 version; Minecraft 1.21.11, 1.21.1 and 1.20.1 are supported by separate sets of jars.
 
 ## Features
 
 - **One trade at a time.** Only the trade you click changes. No job site block breaking, no resetting the whole villager, no losing a good trade to get another one.
 - **Works on traded offers too.** Any unlocked trade can be swapped, whether you have used it before or not.
-- **Same level, vanilla pool.** The new trade is rolled from the vanilla trade pool of the villager's profession at the level that trade was unlocked at, so a Master trade stays a Master trade. Supports the Villager Trade Rebalance experiment.
+- **Same level, same pool.** The new trade is rolled from the trade set of the villager's profession at the level that trade was unlocked at, so a Master trade stays a Master trade. Villager trades are data driven in Minecraft 26.1, so the pool is whatever the game uses for that level: trades that only some villager types get (such as the explorer maps of each biome), trades that datapacks or mods add to the villager trade tags or trade sets, and the Villager Trade Rebalance experiment.
 - **Always something new.** A swap never gives you the trade you just swapped away, and never a trade identical to another trade of the same villager, at any level. Identical means the same items bought and sold with the same enchantment, potion or map destination; amounts and prices do not count, so a Mending book for 10 emeralds and one for 25 are the same trade.
 - **Two of a kind, if you like.** By default a level can end up with two trades of the same kind as long as they differ, for example two enchanted books with different enchantments or two explorer maps to different structures. Server owners who prefer one trade of each kind per level can turn that off.
 - **Fair cost, your currency.** Each swap costs 1 emerald from your inventory by default. The amount and the item (any item, also from other mods) are set in the server config; Creative is always free. You only pay when the swap succeeds. If there is no valid trade left for that slot, nothing is charged and you get a short message.
 - **Your prices.** The new trade immediately shows the price you pay, including reputation and Hero of the Village discounts.
-- **Cartographer friendly.** Explorer map searches are cached per area, and a map is only searched for when its destination is allowed, so swapping a cartographer's map trades again and again does not lag the server.
+- **Cartographer friendly.** Explorer map searches are cached per area, and a map is only searched for when its destination is allowed, so swapping a cartographer's map trades again and again does not lag the server, and a map you do not get never uses up a structure. This works for every explorer map trade, also from datapacks and mods.
 - **Out of the way.** The buttons float on the left side of the trading screen, follow the list when you scroll, and can be hidden with a small toggle next to the "Trades" label.
 - **Survives zombification.** The mod remembers which level each trade belongs to, and keeps that through zombification and curing.
 - **Existing worlds.** Villagers that existed before the mod was installed can be swapped right away; the level of each trade is worked out from its position in the list.
@@ -27,10 +27,13 @@ Only regular villagers can be swapped: not wandering traders, baby villagers, ni
 
 | | NeoForge | Forge | Fabric |
 |---|---|---|---|
-| Minecraft | 1.21.11 | 1.21.11 | 1.21.11 |
-| Loader | NeoForge 21.11.42 or newer | Forge 61.0.1 or newer | Fabric Loader 0.17.3 or newer |
-| Other | | | Fabric API 0.139.5 or newer |
-| Jar | `villagertradeswap-neoforge-1.21.11-<version>.jar` | `villagertradeswap-forge-1.21.11-<version>.jar` | `villagertradeswap-fabric-1.21.11-<version>.jar` |
+| Minecraft | 26.1, 26.1.1 or 26.1.2 | 26.1, 26.1.1 or 26.1.2 | 26.1, 26.1.1 or 26.1.2 |
+| Java | 25 | 25 | 25 |
+| Loader | NeoForge 26.1.0.1-beta or newer | Forge 62.0.0 or newer | Fabric Loader 0.18.4 or newer |
+| Other | | | Fabric API 0.144.0 or newer |
+| Jar | `villagertradeswap-neoforge-26.1-26.1.2-<version>.jar` | `villagertradeswap-forge-26.1-26.1.2-<version>.jar` | `villagertradeswap-fabric-26.1-26.1.2-<version>.jar` |
+
+Minecraft 26.x needs Java 25. One jar per loader works on all three Minecraft versions. NeoForge only has beta builds for Minecraft 26.1 and 26.1.1; Forge uses the 62.x series for 26.1, 63.x for 26.1.1 and 64.x for 26.1.2.
 
 NeoForge and Forge are separate loaders that do not run each other's mods, so each has its own jar. Pick the jar that matches your loader.
 
@@ -43,9 +46,9 @@ The server decides the price and tells the client when a villager's trading scre
 - **NeoForge and Forge:** the mod is required on both the client and the server. Players without it cannot join a server that has it; the connection is refused at login.
 - **Fabric:** install it on both sides to swap trades. Players without the mod can still join a server that has it and trade normally, they just do not get the swap buttons. A client with the mod on a server without it also works; the buttons simply do not appear.
 
-### Coming from the 1.21.1 version
+### Coming from an older Minecraft version
 
-The 1.21.11 version is 1.1.0 from the start; a 1.21.1 client cannot join a 1.21.11 server anyway, because the Minecraft versions differ. If the old `config/villagertradeswap.json` of 1.0.0 is still there, its `rerollCost` is taken over into `config/villagertradeswap-server.toml` the first time the mod starts (see below). A `villagertradeswap-server.toml` from the 1.21.1 version has the same format and is used as it is.
+The 26.1 version is 1.1.0 from the start; a client of another Minecraft version cannot join a 26.1 server anyway. If the old `config/villagertradeswap.json` of 1.0.0 is still there, its `rerollCost` is taken over into `config/villagertradeswap-server.toml` the first time the mod starts (see below). A `villagertradeswap-server.toml` from the 1.21.11 or 1.21.1 version has the same format and is used as it is.
 
 ## Configuration
 
@@ -92,7 +95,7 @@ Your own values and comments are never rewritten. Options missing from the file 
 
 - `showRerollButtons`: whether the swap buttons are shown. This is the toggle next to the "Trades" label, saved automatically.
 
-## Upgrading a world from Minecraft 1.21.1
+## Upgrading a world from Minecraft 1.21.11
 
 Swapped trades are ordinary villager trades, so the game upgrades them like any other trade. The level the mod recorded for each trade is stored on the villager (and on zombie villagers) under the same key in both versions, and the game keeps it during the upgrade, so swapping keeps using the level each trade was unlocked at, also for villagers that are cured after the upgrade.
 
@@ -100,10 +103,10 @@ The recorded levels are only used when their number matches the villager's trade
 
 ## Compatibility notes
 
-- **Villager Trade Peek** (1.21.11 version): works together. Swap buttons appear only on unlocked trades, never on the greyed-out locked rows Trade Peek adds below them. Swapping does not change the previewed future trades, and the trades Trade Peek unlocks on level-up are recognized as trades of that level.
-- **Villager Trade Labels** (1.21.11 version): works together. The labels follow the trade list, so a swapped trade shows the label of its new item.
+- **Villager Trade Peek** (26.1 version): works together. Swap buttons appear only on unlocked trades, never on the greyed-out locked rows Trade Peek adds below them. Swapping does not change the previewed future trades, and the trades Trade Peek unlocks on level-up are recognized as trades of that level. Swaps use the villager's own random source, not the world's trade random sequences, so swapping does not shift what later level-ups or Trade Peek previews roll.
+- **Villager Trade Labels** (26.1 version): works together. The labels follow the trade list, so a swapped trade shows the label of its new item.
 - **Trade Cycling and similar mods:** works together. When such a mod rerolls all of a villager's trades, the new trades are recorded as trades of the villager's current level.
-- Trades added by other mods through the standard villager trade event are part of the pool automatically.
+- Trades that datapacks or other mods add to the villager trade tags (such as `#minecraft:farmer/level_2`) or trade sets are part of the pool automatically. A level whose trade set is missing or empty cannot be swapped; nothing is charged.
 - Mods that change how many trades a villager gets per level, or that add trades in unusual ways, still work; when the mod cannot tell which level such a trade came from, it assumes two trades per level in list order.
 
 ## Building from source

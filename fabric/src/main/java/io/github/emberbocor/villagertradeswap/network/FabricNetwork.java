@@ -15,8 +15,8 @@ public final class FabricNetwork {
     }
 
     public static void register() {
-        PayloadTypeRegistry.playS2C().register(Info.TYPE, Info.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(Request.TYPE, Request.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(Info.TYPE, Info.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(Request.TYPE, Request.STREAM_CODEC);
         ServerPlayNetworking.registerGlobalReceiver(Request.TYPE, (request, context) -> RerollHandler.handle(context.player(), request.payload()));
     }
 

@@ -19,7 +19,7 @@ import io.github.emberbocor.villagertradeswap.client.RerollToggle;
 import io.github.emberbocor.villagertradeswap.network.RerollTradePayload;
 import io.github.emberbocor.villagertradeswap.platform.ClientServices;
 import io.github.emberbocor.villagertradeswap.trade.Currency;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.network.chat.Component;
@@ -46,7 +46,7 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
     @Final
     private static Component TRADES_LABEL;
     @Shadow
-    int scrollOff;
+    private int scrollOff;
 
     @Unique
     @Nullable
@@ -83,8 +83,8 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
         villagertradeswap$updateRerollWidgets();
     }
 
-    @Inject(method = "renderContents", at = @At("HEAD"))
-    private void villagertradeswap$updateRerollWidgetsOnRender(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    @Inject(method = "extractContents", at = @At("HEAD"))
+    private void villagertradeswap$updateRerollWidgetsOnRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         villagertradeswap$updateRerollWidgets();
     }
 

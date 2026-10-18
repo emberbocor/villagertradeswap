@@ -1,8 +1,8 @@
 package io.github.emberbocor.villagertradeswap.trade;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -10,15 +10,20 @@ import java.util.stream.IntStream;
 
 import org.jetbrains.annotations.Nullable;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.Unit;
 import net.minecraft.world.entity.npc.villager.Villager;
-import net.minecraft.world.entity.npc.villager.VillagerProfession;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
-import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.item.trading.TradeSet;
+import net.minecraft.world.item.trading.VillagerTrade;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 final class RerollCandidates {
     private RerollCandidates() {
@@ -26,8 +31,8 @@ final class RerollCandidates {
 
     @Nullable
     static MerchantOffer roll(ServerLevel level, Villager villager, List<MerchantOffer> offers, int[] levels, int index, boolean allowSameKindInLevel) {
-        VillagerTrades.ItemListing[] listings = listings(villager, levels[index]);
-        if (listings == null) {
+        TradeSet tradeSet = tradeSet(level, villager, levels[index]);
+        if (tradeSet == null) {
             return null;
         }
         List<TradeIdentity> takenTrades = offers.stream().map(TradeIdentity::of).toList();
@@ -38,42 +43,33 @@ final class RerollCandidates {
         Predicate<TradeIdentity> allowed = trade -> !takenTrades.contains(trade) && !takenKinds.contains(trade.kind());
 
         RandomSource random = villager.getRandom();
-        List<VillagerTrades.ItemListing> remaining = new ArrayList<>(Arrays.asList(listings));
+        LootContext context = lootContext(level, villager, random);
+        List<Holder<VillagerTrade>> remaining = new ArrayList<>(tradeSet.getTrades().stream().toList());
         while (!remaining.isEmpty()) {
-            VillagerTrades.ItemListing listing = unwrap(villager, remaining.remove(random.nextInt(remaining.size())));
-            if (listing == null) {
-                continue;
-            }
-            MerchantOffer offer = MapTrades.isMapTrade(listing)
-                    ? MapTrades.createOffer(level, villager, listing, allowed)
-                    : listing.getOffer(level, villager, random);
+            VillagerTrade trade = remaining.remove(random.nextInt(remaining.size())).value();
+            MerchantOffer offer = MapTrades.deferMaps(() -> trade.getOffer(context));
             if (offer != null && allowed.test(TradeIdentity.of(offer))) {
-                return offer;
+                MerchantOffer resolved = MapTrades.resolve(level, villager, offer);
+                if (resolved != null) {
+                    return resolved;
+                }
             }
         }
         return null;
     }
 
     @Nullable
-    private static VillagerTrades.ItemListing[] listings(Villager villager, int level) {
-        ResourceKey<VillagerProfession> profession = villager.getVillagerData().profession().unwrapKey().orElse(null);
-        if (profession == null) {
-            return null;
-        }
-        Int2ObjectMap<VillagerTrades.ItemListing[]> pool = null;
-        if (villager.level().enabledFeatures().contains(FeatureFlags.TRADE_REBALANCE)) {
-            pool = VillagerTrades.EXPERIMENTAL_TRADES.get(profession);
-        }
-        if (pool == null) {
-            pool = VillagerTrades.TRADES.get(profession);
-        }
-        return pool != null ? pool.get(level) : null;
+    private static TradeSet tradeSet(ServerLevel level, Villager villager, int villagerLevel) {
+        ResourceKey<TradeSet> key = villager.getVillagerData().profession().value().getTrades(villagerLevel);
+        return key != null ? level.registryAccess().lookupOrThrow(Registries.TRADE_SET).getValue(key) : null;
     }
 
-    @Nullable
-    private static VillagerTrades.ItemListing unwrap(Villager villager, VillagerTrades.ItemListing listing) {
-        return listing instanceof VillagerTrades.TypeSpecificTrade typeSpecific
-                ? typeSpecific.trades().get(villager.getVillagerData().type().unwrapKey().orElse(null))
-                : listing;
+    private static LootContext lootContext(ServerLevel level, Villager villager, RandomSource random) {
+        LootParams params = new LootParams.Builder(level)
+                .withParameter(LootContextParams.ORIGIN, villager.position())
+                .withParameter(LootContextParams.THIS_ENTITY, villager)
+                .withParameter(LootContextParams.ADDITIONAL_COST_COMPONENT_ALLOWED, Unit.INSTANCE)
+                .create(LootContextParamSets.VILLAGER_TRADE);
+        return new LootContext.Builder(params).withOptionalRandomSource(random).create(Optional.empty());
     }
 }

@@ -47,7 +47,7 @@ public final class RerollHandler {
         MerchantOffer offer = levels != null ? RerollCandidates.roll(player.level(), villager, offers, levels, index, ServerConfig.allowSameTradeInLevel()) : null;
         if (offer == null) {
             villager.makeSound(SoundEvents.VILLAGER_NO);
-            player.displayClientMessage(Component.translatable("villagertradeswap.message.no_trade"), true);
+            player.sendOverlayMessage(Component.translatable("villagertradeswap.message.no_trade"));
             return;
         }
         if (cost > 0) {
