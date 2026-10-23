@@ -35,7 +35,7 @@ final class RerollCandidates {
         if (tradeSet == null) {
             return null;
         }
-        List<TradeIdentity> takenTrades = offers.stream().map(TradeIdentity::of).toList();
+        List<TradeIdentity> takenTrades = offers.stream().map(offer -> TradeIdentity.of(offer, level.registryAccess())).toList();
         Set<TradeKind> takenKinds = allowSameKindInLevel ? Set.of() : IntStream.range(0, offers.size())
                 .filter(i -> i != index && levels[i] == levels[index])
                 .mapToObj(i -> TradeKind.of(offers.get(i)))
@@ -44,11 +44,11 @@ final class RerollCandidates {
 
         RandomSource random = villager.getRandom();
         LootContext context = lootContext(level, villager, random);
-        List<Holder<VillagerTrade>> remaining = new ArrayList<>(tradeSet.getTrades().stream().toList());
+        List<Holder<VillagerTrade>> remaining = new ArrayList<>(tradeSet.trades().stream().toList());
         while (!remaining.isEmpty()) {
             VillagerTrade trade = remaining.remove(random.nextInt(remaining.size())).value();
             MerchantOffer offer = MapTrades.deferMaps(() -> trade.getOffer(context));
-            if (offer != null && allowed.test(TradeIdentity.of(offer))) {
+            if (offer != null && allowed.test(TradeIdentity.of(offer, level.registryAccess()))) {
                 MerchantOffer resolved = MapTrades.resolve(level, villager, offer);
                 if (resolved != null) {
                     return resolved;

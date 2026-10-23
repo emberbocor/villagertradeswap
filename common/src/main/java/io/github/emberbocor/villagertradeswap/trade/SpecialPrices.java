@@ -1,5 +1,6 @@
 package io.github.emberbocor.villagertradeswap.trade;
 
+import io.github.emberbocor.villagertradeswap.mixin.AbstractVillagerAccessor;
 import io.github.emberbocor.villagertradeswap.mixin.VillagerInvoker;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
@@ -14,10 +15,13 @@ final class SpecialPrices {
         MerchantOffers single = new MerchantOffers();
         single.add(offer);
         MerchantOffers offers = villager.getOffers();
+        Player tradingPlayer = villager.getTradingPlayer();
         villager.setOffers(single);
+        ((AbstractVillagerAccessor) villager).villagertradeswap$setTradingPlayerField(null);
         try {
             ((VillagerInvoker) villager).villagertradeswap$updateSpecialPrices(player);
         } finally {
+            ((AbstractVillagerAccessor) villager).villagertradeswap$setTradingPlayerField(tradingPlayer);
             villager.setOffers(offers);
         }
     }

@@ -9,9 +9,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.emberbocor.villagertradeswap.trade.MapTrades;
 import net.minecraft.core.Holder;
-import net.minecraft.tags.TagKey;
+import net.minecraft.core.HolderSet;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.saveddata.maps.MapDecorationType;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -21,7 +20,7 @@ import net.minecraft.world.level.storage.loot.functions.ExplorationMapFunction;
 public abstract class ExplorationMapFunctionMixin {
     @Shadow
     @Final
-    private TagKey<Structure> destination;
+    private HolderSet<Structure> destination;
     @Shadow
     @Final
     private Holder<MapDecorationType> mapDecoration;
@@ -37,8 +36,9 @@ public abstract class ExplorationMapFunctionMixin {
 
     @Inject(method = "run", at = @At("HEAD"), cancellable = true)
     private void villagertradeswap$deferMap(ItemStack itemStack, LootContext context, CallbackInfoReturnable<ItemStack> cir) {
-        if (MapTrades.isDeferring() && itemStack.is(Items.MAP)) {
-            cir.setReturnValue(MapTrades.placeholder(new MapTrades.Search(destination, mapDecoration, zoom, searchRadius, skipKnownStructures)));
+        if (MapTrades.isDeferring() && !itemStack.isEmpty()) {
+            cir.setReturnValue(MapTrades.placeholder(itemStack, context,
+                    new MapTrades.Search(destination, mapDecoration, zoom, searchRadius, skipKnownStructures)));
         }
     }
 }
